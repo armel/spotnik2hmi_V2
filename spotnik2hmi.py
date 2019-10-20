@@ -35,7 +35,7 @@ if len(sys.argv)==4:
 
     if sys.argv[3]=="DEBUG": 
         print("MODE DEBUG")
-        debugON()
+        debug_on()
 #definition du nom de l'application
 set_procname('spotnik2hmi')
 
@@ -44,8 +44,8 @@ callsign = get_callsign()
 freq = get_frequency()
 
 #recuperation GPIO dans les parametres
-nbgpioptt = get_gpioptt()
-nbgpiosql = get_gpiosql()
+nbgpioptt = get_gpio_ptt()
+nbgpiosql = get_gpio_sql()
 
 #adresse IP
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -56,14 +56,14 @@ s.close()
 
 
 #Memoire SD libre
-disk= getDiskSpace()
+disk= get_disk_space()
 occupdisk = str(disk)
 
 #Utilisation CPU
-chargecpu= getCPUuse()
+chargecpu= get_cpu_use()
 
 #Detection carte
-revision=getrevision()
+revision=get_revision()
 if revision =="0000":
     board = 'Orange Pi'
     #temperature CPU
@@ -86,7 +86,7 @@ if revision !="0000":
     os.system('amixer -c 0 set ' +audioOut+ ' unmute') 
     
     #Detection RPI 3 B+
-    revision=getrevision()
+    revision=get_revision()
 
     if revision=="a020d3":
         log("RASPBERRY 3B+ DETECTION","white")
@@ -104,7 +104,7 @@ print("     +   " +"Station: "+d.callsign + "       Frequence: "+d.freq+" Mhz"+"
 print("     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
 
 #reset de l'ecran
-resetHMI()
+reset_hmi()
 
 sleep(1);
 #Envoi des informations callsign et version au HMI
@@ -121,13 +121,13 @@ log("Maj Call ...","red")
 
 #Reglage niveau audio visible si Raspberry
 if board =='Raspberry Pi':
-    ecrireval("trafic.vasound.val","1")
-    GetAudioInfo(audioOut)
+    ecrire_val("trafic.vasound.val","1")
+    get_audio_info(audioOut)
 sleep(4);
 
 
 #verification si nouvelle version disponible
-checkversion()
+check_version()
 
 #**************************************
 #* demarrage page trafic ou perroquet *
@@ -137,9 +137,9 @@ a = open("/etc/spotnik/network","r")
 tn = a.read()
 
 if tn.find("default") != -1 :
-      gopage("parrot")
+      go_page("parrot")
 else:
-      gopage("trafic")
+      go_page("trafic")
 a.close()
 
 os.system ("clear")
@@ -288,7 +288,7 @@ while True:
         d.salon_current="RRF"
         ecrire("trafic.g0.txt","")
         if d.qsystatut==False and d.firstboot==False:
-            gopage("qsy")
+            go_page("qsy")
         d.qsystatut=False
         
     if tn.find("fon") != -1 and d.salon_current!="FON":
@@ -296,7 +296,7 @@ while True:
         d.salon_current="FON"
         ecrire("trafic.g0.txt","")
         if d.qsystatut==False and d.firstboot==False:
-            gopage("qsy")
+            go_page("qsy")
         d.qsystatut=False
     
     if tn.find("tec") != -1 and d.salon_current!="TEC":
@@ -304,7 +304,7 @@ while True:
         d.salon_current="TEC"
         ecrire("trafic.g0.txt","")
         if d.qsystatut==False and d.firstboot==False:
-            gopage("qsy")
+            go_page("qsy")
         d.qsystatut=False
 
     if tn.find("int") != -1 and d.salon_current!="INT":
@@ -312,7 +312,7 @@ while True:
         d.salon_current="INT"
         ecrire("trafic.g0.txt","")
         if d.qsystatut==False and d.firstboot==False:
-            gopage("qsy")
+            go_page("qsy")
         d.qsystatut=False
 
     if tn.find("bav") != -1 and d.salon_current!="BAV":
@@ -320,7 +320,7 @@ while True:
         d.salon_current="BAV"
         ecrire("trafic.g0.txt","")
         if d.qsystatut==False and d.firstboot==False:
-            gopage("qsy")
+            go_page("qsy")
         d.qsystatut=False
 
     if tn.find("loc") != -1 and d.salon_current!="LOC":
@@ -328,7 +328,7 @@ while True:
         d.salon_current="LOC"
         ecrire("trafic.g0.txt","")
         if d.qsystatut==False and d.firstboot==False:
-            gopage("qsy")
+            go_page("qsy")
         d.qsystatut=False
 
     if tn.find("default") != -1 and d.salon_current!="PER":
@@ -336,9 +336,9 @@ while True:
         ecrire("trafic.g0.txt","")
         d.salon_current="PER"
         if d.qsystatut==False and d.firstboot==False:
-            gopage("qsy") 
+            go_page("qsy") 
         if d.qsystatut==False and d.firstboot==True:
-            gopage("Parrot") 
+            go_page("Parrot") 
         d.qsystatut=False
 
     if tn.find("sat") != -1 and d.salon_current!="SAT":
@@ -346,7 +346,7 @@ while True:
         ecrire("trafic.g0.txt","") 
         d.salon_current="SAT"
         if d.qsystatut==False and d.firstboot==False:
-            gopage("qsy")
+            go_page("qsy")
         d.qsystatut=False   
 
     if tn.find("el") != -1 and d.salon_current!="ECH":
@@ -354,7 +354,7 @@ while True:
         ecrire("trafic.g0.txt","")
         d.salon_current="ECH"
         if d.qsystatut==False and d.firstboot==False:
-            gopage("qsy")
+            go_page("qsy")
         d.qsystatut=False
 #***********************************
 #*Gestion salon Perroquet TX et RX *
@@ -369,13 +369,13 @@ while True:
              log("RX Detected","white")
              d.statutradio="RX"
              #requete("vis p2,1")
-             ecrireval("Vnbr_parrot.val","1")
+             ecrire_val("Vnbr_parrot.val","1")
              
 
         elif gpiorx_value.find("0") != -1 and d.statutradio!="TX" and d.statutradio!="":
              log("RX OFF","white")
              #requete("vis p2,0")
-             ecrireval("Vnbr_parrot.val","0")
+             ecrire_val("Vnbr_parrot.val","0")
 
              d.statutradio=""
 
@@ -388,12 +388,12 @@ while True:
              log("Tx ON","white")
              d.statutradio="TX"
              #requete("vis p3,1")
-             ecrireval("Vnbr_parrot.val","2")
+             ecrire_val("Vnbr_parrot.val","2")
              
         elif gpiotx_value.find("0") != -1 and d.statutradio!="RX" and d.statutradio!="":
              log("Tx OFF","white")
              #requete("vis p3,0")
-             ecrireval("Vnbr_parrot.val","0")
+             ecrire_val("Vnbr_parrot.val","0")
              d.statutradio=""
 
         q.close()
@@ -404,7 +404,7 @@ while True:
 #* Gestion des commandes serie reception du Nextion *
 #****************************************************
 
-    s = hmiReadline()
+    s = hmi_read_line()
     if len(s)<59 and len(s)>0:
         log(s,"blue")
 #**********************
@@ -414,14 +414,14 @@ while True:
 #OUIREBOOT#
     if s.find("ouireboot")!= -1:
         log("REBOOT","red")
-        gopage("boot")
+        go_page("boot")
         os.system('reboot')
 
 #OUIRESTART#
     if s.find("ouiredem")!= -1:
         log("REDEMARRAGE","red")
         dtmf("96#")
-        gopage ("trafic")
+        go_page("trafic")
 
 #OUIARRET#
     if s.find("ouiarret")!= -1:
@@ -432,12 +432,12 @@ while True:
     if s.find("ouimodwifi")!= -1:
         
         if d.rpi3bplus==True:
-            wifi3bplus(newssid,newpass)
+            wifi_3bplus(newssid,newpass)
         else:
             wifi(newssid,newpass)
         log("ECRITURE INFO WIFI DANS JSON + CONFIG","red")
         
-        gopage("reglages")
+        go_page("reglages")
 
 #*******************************
 #* Gestion commande du Nextion *
@@ -451,7 +451,7 @@ while True:
         requete("get t1.txt")
     
         while 1:
-            s = hmiReadline()
+            s = hmi_read_line()
             if len(s)<71:
                 print(s)
                 wifiinfo= s.split("p")
@@ -461,7 +461,7 @@ while True:
                 log(("New PASS: "+newpass),"white")
                 d.wifistatut = 0
                 break
-        gopage("confirm")
+        go_page("confirm")
         ecrire("confirm.t0.txt","CONFIRMER LA MAJ WIFI ?")  
 
 
@@ -473,7 +473,7 @@ while True:
         requete("get nOut.val")
 
         while 1:
-            s = hmiReadline()
+            s = hmi_read_line()
             log(s,"blue")
             sa=s[2:]
             log(sa,"blue")
@@ -508,7 +508,7 @@ while True:
 
         while 1:
 
-            s = hmiReadline()
+            s = hmi_read_line()
             log(s,"blue")
             sb=s[2:]
             log(sb,"blue")
@@ -517,27 +517,27 @@ while True:
                 if sb[2:3] == "x":
                     log(("Niveau audio in: "+ str(int(sb[3:5], 16))),"white")   
                     audioininfo=str(int(sb[3:5], 16))
-                    setAudio(audioOut,audiooutinfo,audioininfo)
+                    set_audio(audioOut,audiooutinfo,audioininfo)
                     break
                 elif sb[2:3] == "t":
                     log("Niveau audio in: "+ "9","white")   
                     audioininfo=9
-                    setAudio(audioOut,audiooutinfo,audioininfo)
+                    set_audio(audioOut,audiooutinfo,audioininfo)
                     break
                 elif sb[2:3] == "n":
                     log("Niveau audio in: "+ "10","white")  
                     audioininfo=10
-                    setAudio(audioOut,audiooutinfo,audioininfo)
+                    set_audio(audioOut,audiooutinfo,audioininfo)
                     break
                 elif sb[2:3] == "r":
                     log("Niveau audio in: "+ "13","white")  
                     audioininfo=13
-                    setAudio(audioOut,audiooutinfo,audioininfo)
+                    set_audio(audioOut,audiooutinfo,audioininfo)
                     break
                 else:
                     log(("Niveau audio in: "+ str(ord(sb[1]))),"white") 
                     audioininfo=str(ord(sb[1]))
-                    setAudio(audioOut,audiooutinfo,audioininfo)
+                    set_audio(audioOut,audiooutinfo,audioininfo)
                     break       
 
 
@@ -659,12 +659,12 @@ while True:
 #SPEEDNET#
     if s.find("starttestNet")!= -1:
         log("Detection page speedNet","red")
-        getspeednet()
+        get_speed_net()
 
 #MIXER#
     if s.find("mixer")!= -1:
         log("Detection page mixer","red")
-        GetAudioInfo(audioOut)
+        get_audio_info(audioOut)
                         
 #TRAFIC#        
     if s.find("trafic")!= -1:
@@ -731,7 +731,7 @@ while True:
 #PAGE MAJ 
     if s.find("checkversion")!= -1:
         log("PAGE MAJ","red")
-        checkversion()
+        check_version()
 
 #PAGE UPDATE
     if s.find("majpython")!= -1:
@@ -739,7 +739,7 @@ while True:
         os.system('sh /opt/spotnik/spotnik2hmi_V2/maj.sh')
     
     if s.find("majnextion")!= -1:
-        updatehmi()     
+        update_hmi()     
 
 #***************
 #* gestion QSY *

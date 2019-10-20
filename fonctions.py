@@ -84,7 +84,7 @@ def set_procname(newname):
 #* GESTION LOG *
 #***************
 
-def debugON():
+def debug_on():
     global DEBUG
     DEBUG=True
 
@@ -136,26 +136,19 @@ def portcom(portseriel,vitesse):
 #* GESTION ECRAN NEXTION *
 #*************************
 
-def resetHMI():
+def reset_hmi():
     global port
     log("Reset HMI ...","white")
     rstcmd=b'rest' + eof
     port.write(rstcmd)
 
-def updatehmi():
-
+def update_hmi():
     log("MAJ ECRAN HMI","red")
     log(screentype,"white")
     log(porthmi,"white")
     os.system ('python /opt/spotnik/spotnik2hmi_V2/nextion/nextion.py '+'/opt/spotnik/spotnik2hmi_V2/nextion/' +screentype.decode("utf-8") +'.tft '+ '/dev/'+porthmi)
 
-def setdim(dimv):
-    log("dim debut","white")
-    dimsend ="dim="+str(dimv)+eof
-    port.write(b'dimsend')
-    log("dim fin","white")
-
-def hmiReadline():
+def hmi_read_line():
     global port
     rcv = port.readline()
     myString = str(rcv)
@@ -168,14 +161,14 @@ def ecrire(champ,texte):
     infoserialtxt=champ+"=" +texte
     log(infoserialtxt,"blue")
 #Fonction ecriture valeur sur ecran
-def ecrireval(champ,valeur):
+def ecrire_val(champ,valeur):
     wcmdval = str.encode(champ)+b'='+str.encode(valeur)+ eof
     port.write(wcmdval)
     infoserialval=champ+"=" +valeur
     log(infoserialval,"blue") 
     
 #Fonction appel de page
-def gopage(choixnompage):
+def go_page(choixnompage):
     appelpage = b'page ' + str.encode(choixnompage)+eof
     port.write(appelpage)
     infoserialpage="page " +choixnompage
@@ -185,7 +178,7 @@ def gopage(choixnompage):
 #* GESTION TEST INTERNET *
 #*************************
 
-def getspeednet():
+def get_speed_net():
 
     servers = []
 
@@ -222,7 +215,7 @@ def getspeednet():
 #***************************
      
 #recuperation info niveau 
-def GetAudioInfo(interfaceaudio):
+def get_audio_info(interfaceaudio):
     
     templevelOut = subprocess.check_output('amixer -c 0 get ' + interfaceaudio +" -M", shell=True)
     templevelOut =  str(templevelOut).split('[')
@@ -235,15 +228,12 @@ def GetAudioInfo(interfaceaudio):
     log("Lecture du niveau audio In Alsamixer: "+str(levelIn),"white")
     log("Lecture du niveau audio Out Alsamixer: "+str(levelOut),"white")
 
-    #ecrireval("hIn.val",str(levelIn))
-    ecrireval("boot.Vtxt_nIn.val",str(levelIn))
-    #levelOutcor=round(int(levelOut)/1.240)
-    #ecrireval("hOut.val",str(levelOut))
-    ecrireval("boot.Vtxt_nOut.val",str(levelOut))
+    ecrire_val("boot.Vtxt_nIn.val",str(levelIn))
+    ecrire_val("boot.Vtxt_nOut.val",str(levelOut))
 
 
 #Fonction reglage des niveaux    
-def setAudio(interfaceaudio,levelOut,levelIn):
+def set_audio(interfaceaudio,levelOut,levelIn):
     lIn= alsaaudio.Mixer(control='Mic')
     levelOutcor = int(levelOut)*1
     os.system('amixer -c 0 set' + " Mic " + str(levelIn) + "%")
@@ -261,7 +251,7 @@ def requete(valeur):
 #* REQUETE VERSION SOFTWARE *
 #****************************
 
-def checkversion():
+def check_version():
         r =""
         r = requests.get('https://raw.githubusercontent.com/F8ASB/spotnik2hmi_V2/master/version')
         
@@ -277,13 +267,13 @@ def checkversion():
 #* REQUETE INFOS SYSTEMES *
 #**************************
 
-def getCPUuse():
+def get_cpu_use():
 
     CPU_Pct=str(round(float(os.popen('''grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage }' ''').readline()),2))
     log(("CPU Usage = " + CPU_Pct),"white")
     return(CPU_Pct)
                                                  
-def getDiskSpace():
+def get_disk_space():
     p = os.popen("df -h /")
     i = 0
     while 1:
@@ -314,7 +304,7 @@ else:
     usage()
 #recuperation GPIO en fonction
 
-def get_gpioptt():
+def get_gpio_ptt():
     global gpioptt
    
     svxconfig="/etc/spotnik/svxlink.cfg"
@@ -325,7 +315,7 @@ def get_gpioptt():
     log(gpioptt,"white")
     return(gpioptt)
 
-def get_gpiosql():
+def get_gpio_sql():
     global gpiosql
    
     svxconfig="/etc/spotnik/svxlink.cfg"
@@ -357,7 +347,7 @@ def get_callsign():
         return(indicatif)  
 
 #regarde la version Raspberry
-def getrevision():
+def get_revision():
 
   # Extract board revision from cpuinfo file
     myrevision = "0000"
@@ -458,7 +448,7 @@ def wifi(wifiid,wifipass):
         json.dump(config, f)
  
 #Fonction ecriture wifi RPI3B+
-def wifi3bplus(ssid,password):
+def wifi_3bplus(ssid,password):
     pathwpasupplicant="/etc/wpa_supplicant/"
     log("Ecriture fichier wpa_supplicant.conf + fichier Gui","yellow")
 
@@ -489,7 +479,7 @@ def wifi3bplus(ssid,password):
 #********************
 
 #Fonction recherche de nom de ville selon code ICAO
-def getcity():
+def get_city():
     #lecture valeur icao dans config.json       
         with open(Json, 'r') as b:
             afind= json.load(b)
@@ -511,7 +501,7 @@ def get_meteo():
         airport =afind['airport_code']
         #Info ville Aéroport
         log(("Le code ICAO est: "+airport),"white")
-        getcity()
+        get_city()
         fichier = open("/tmp/meteo.txt", "w")
         fichier.write("[rapport]")
         fichier.close()
@@ -536,5 +526,3 @@ def get_meteo():
         ecrire("meteo.t4.txt",str(rose))
         Pression = pression[:-2]+'hPa'
         ecrire("meteo.t2.txt",str(Pression))
-
-
