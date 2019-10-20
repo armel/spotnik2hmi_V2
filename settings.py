@@ -7,30 +7,30 @@ import configparser, os
 from fonctions import *
 
 #Variables
-eof = "\xff\xff\xff"
+eof = '\xff\xff\xff'
 today = datetime.now()
-versionDash = "3.00"
+versionDash = '3.00'
 wifistatut = 0
-dashlist = ""
-monitor = ""
-qsystatut=False
-salon_current=""
-dateold=""
-heureSold=""
-statutradio=""
-firstboot= True
-rpi3bplus=False
+dashlist = ''
+monitor = ''
+qsystatut = False
+salon_current = ''
+dateold = ''
+heureSold = ''
+statutradio = ''
+firstboot = True
+rpi3bplus = False
 DEBUG = False
 
 #Chemins fichiers
-svxconfig="/etc/spotnik/svxlink.cfg"
-cheminversion= open("/etc/spotnik/version", "r")
+svxconfig = '/etc/spotnik/svxlink.cfg'
+cheminversion = open('/etc/spotnik/version', 'r')
 version = cheminversion.read()
 version = version.strip()
-confwifi="/etc/NetworkManager/system-connections/SPOTNIK"
+confwifi = '/etc/NetworkManager/system-connections/SPOTNIK'
 
 #Chemin log a suivre
-svxlogfile = "/tmp/svxlink.log"   #SVXLink log file 
+svxlogfile = '/tmp/svxlink.log'   #SVXLink log file 
 
 #routine ouverture fichier de config
 config = configparser.RawConfigParser()
@@ -41,13 +41,13 @@ callsign = get_callsign()
 freq = get_frequency()
 
 #Info pour fichier wifi rpiB+
-pathwpasupplicant="/etc/wpa_supplicant/"
+pathwpasupplicant = '/etc/wpa_supplicant/'
 
-header1="ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev"
-header2="update_config=1"
-header3="network={"
-header6="    key_mgmt=WPA-PSK"
-header7="}"
+header1 = 'ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev'
+header2 = 'update_config=1'
+header3 = 'network={'
+header6 = '    key_mgmt=WPA-PSK'
+header7 = '}'
 
 
 #*******************************
@@ -134,5 +134,4 @@ search_stop = ''
 timestamp = ''
 
 MOVE_MAX = 5
-
 

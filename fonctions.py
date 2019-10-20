@@ -42,7 +42,7 @@ import speedtest
 #partie dashboard
 #import urllib.request, urllib.error, urllib.parse
 import ssl
-url = "http://rrf.f5nlg.ovh"
+url = 'http://rrf.f5nlg.ovh'
 #pour lecture fichier de config
 import configparser, os
 #pour adresse ip
@@ -54,17 +54,17 @@ import json
 #Pour ouverture nomenclature
 import csv
 
-DEBUG=False
+DEBUG = False
 
 #Variables:
 #eof = '\xff\xff\xff'
-eof=bytes([0xFF,0xFF,0xFF])
-port= 0 
+eof = bytes([0xFF,0xFF,0xFF])
+port = 0 
 #Chemin fichier Json
-Json="/etc/spotnik/config.json"
-icao="/opt/spotnik/spotnik2hmi_V2/datas/icao.cfg"
+Json = '/etc/spotnik/config.json'
+icao = '/opt/spotnik/spotnik2hmi_V2/datas/icao.cfg'
 #routine ouverture fichier de config
-svxconfig="/etc/spotnik/svxlink.cfg"
+svxconfig = '/etc/spotnik/svxlink.cfg'
 config = configparser.RawConfigParser()
 config.read(svxconfig)
 #reglage audio
@@ -86,20 +86,20 @@ def set_procname(newname):
 
 def debug_on():
     global DEBUG
-    DEBUG=True
+    DEBUG = True
 
 #Fonction Debug
-def log(s,color):
+def log(s, color):
     if DEBUG:
-        if color=="red":
-            print ('\x1b[7;30;41m'+"DEBUG: "+s+'\x1b[0m')
-        if color=="blue":
-            print ('\x1b[7;34;40m'+"DEBUG: "+s+'\x1b[0m')
-        if color=="yellow":
-            print ('\x1b[7;30;43m'+"DEBUG: "+s+'\x1b[0m')
-        if color=="white":
-            print ('\x1b[7;30;47m'+"DEBUG: "+s+'\x1b[0m')
-        if color=="none":
+        if color == 'red':
+            print ('\x1b[7;30;41m' + 'DEBUG: ' + s + '\x1b[0m')
+        elif color == 'blue':
+            print ('\x1b[7;34;40m' + 'DEBUG: ' + s + '\x1b[0m')
+        elif color == 'yellow':
+            print ('\x1b[7;30;43m' + 'DEBUG: ' + s + '\x1b[0m')
+        elif color == 'white':
+            print ('\x1b[7;30;47m' + 'DEBUG: ' + s + '\x1b[0m')
+        elif color == 'none':
             print (s)   
 
 #***************
@@ -274,14 +274,14 @@ def get_cpu_use():
     return(CPU_Pct)
                                                  
 def get_disk_space():
-    p = os.popen("df -h /")
+    p = os.popen('df -h /')
     i = 0
     while 1:
         i = i +1
         line = p.readline()
         if i==2:
             disk_space=(line.split()[4])
-            return(disk_space[:-1]+" %") 
+            return(disk_space[:-1] + ' %') 
 
 #********************* 
 #* GESTION DEMARRAGE *
@@ -299,7 +299,7 @@ def usage():
     sys.exit(1)
 
 if len(sys.argv) > 2:
-    log("Ok","white")
+    log('Ok', 'white')
 else:
     usage()
 #recuperation GPIO en fonction
@@ -307,23 +307,23 @@ else:
 def get_gpio_ptt():
     global gpioptt
    
-    svxconfig="/etc/spotnik/svxlink.cfg"
+    svxconfig = '/etc/spotnik/svxlink.cfg'
     config = configparser.RawConfigParser()
     config.read(svxconfig)
 
     gpioptt = config.get('Tx1', 'PTT_PIN')
-    log(gpioptt,"white")
+    log(gpioptt, 'white')
     return(gpioptt)
 
 def get_gpio_sql():
     global gpiosql
    
-    svxconfig="/etc/spotnik/svxlink.cfg"
+    svxconfig = '/etc/spotnik/svxlink.cfg'
     config = configparser.RawConfigParser()
     config.read(svxconfig)
 
     gpiosql = config.get('Rx1', 'GPIO_SQL_PIN')
-    log(gpiosql,"white")
+    log(gpiosql, 'white')
     return(gpiosql)
 
 #recuperation frequence dans Json
@@ -343,23 +343,23 @@ def get_callsign():
         call=afind['callsign']
         dept = afind['Departement']
         band = afind['band_type']
-        indicatif = "("+dept+") "+call+" "+band
+        indicatif = '(' + dept + ') ' + call + ' ' + band
         return(indicatif)  
 
 #regarde la version Raspberry
 def get_revision():
 
   # Extract board revision from cpuinfo file
-    myrevision = "0000"
+    myrevision = '0000'
     try:
-        f = open('/proc/cpuinfo','r')
+        f = open('/proc/cpuinfo', 'r')
         for line in f:
-            if line[0:8]=='Revision':
-                length=len(line)
+            if line[0:8] == 'Revision':
+                length = len(line)
                 myrevision = line[11:length-1]
         f.close()
     except:
-        myrevision = "0000"
+        myrevision = '0000'
 
     return myrevision 
 
@@ -387,13 +387,13 @@ def logo(Current_version):
 
 def dtmf(code):
     print(d.version)
-    if d.version =="2.0":
-        b = open("/tmp/svxlink_dtmf_ctrl_pty","w")
+    if d.version == '2.0':
+        b = open('/tmp/svxlink_dtmf_ctrl_pty', 'w')
     else:
-        b = open("/tmp/dtmf_uhf","w")
+        b = open('/tmp/dtmf_uhf', 'w')
 
     b.write(code)
-    log(("code DTMF: "+code),"white")
+    log(('code DTMF: ' + code), 'white')
     b.close()
 
 #***************************
@@ -402,10 +402,10 @@ def dtmf(code):
 
 def prenom(Searchcall):
 
-    callcut = Searchcall.split (" ")
+    callcut = Searchcall.split (' ')
     Searchprenom = callcut[1]
     print(Searchprenom)
-    lines = csv.reader(open("amat_annuaire.csv","rb"),delimiter=";")
+    lines = csv.reader(open('amat_annuaire.csv', 'rb'), delimiter=';')
 
     for indicatif,nom,prenom,adresse,ville,cp in lines:
         if indicatif==Searchprenom:
@@ -428,7 +428,7 @@ def console(cmd):
 #Fonction Wifi ECRITURE
 def wifi(wifiid,wifipass):
     #ecriture fichier /etc/NetworkManager/system-connections/SPOTNIK
-    confwifi="/etc/NetworkManager/system-connections/SPOTNIK"
+    confwifi = '/etc/NetworkManager/system-connections/SPOTNIK'
 
     log("Ecriture fichier SPOTNIK + fichier Gui","yellow")
     cfg = configparser.ConfigParser()
@@ -436,7 +436,7 @@ def wifi(wifiid,wifipass):
     cfg.set('connection', 'id', wifiid)
     cfg.set('wifi', 'ssid', wifiid)
     cfg.set('wifi-security', 'psk', wifipass)
-    cfg.write(open(confwifi,'w'))
+    cfg.write(open(confwifi, 'w'))
 
     #lecture de donnees JSON
     with open(Json, 'r') as f:
@@ -449,8 +449,8 @@ def wifi(wifiid,wifipass):
  
 #Fonction ecriture wifi RPI3B+
 def wifi_3bplus(ssid,password):
-    pathwpasupplicant="/etc/wpa_supplicant/"
-    log("Ecriture fichier wpa_supplicant.conf + fichier Gui","yellow")
+    pathwpasupplicant = '/etc/wpa_supplicant/'
+    log('Ecriture fichier wpa_supplicant.conf + fichier Gui', 'yellow')
 
     #lecture de donnees JSON
     with open(Json, 'r') as f:
@@ -461,18 +461,18 @@ def wifi_3bplus(ssid,password):
     with open(Json, 'w') as f:
         json.dump(config, f)    
 
-    header4='    ssid="'+ssid+'"'
-    header5='    psk="'+password+'"'
+    header4 = '    ssid="' + ssid + '"'
+    header5 = '    psk="' + password + '"'
 
 #Sauvegarde de wpa_supplicant.conf existant et renommage en wpa_supplicant.conf.old
-    os.rename(pathwpasupplicant+'wpa_supplicant.conf', pathwpasupplicant+'wpa_supplicant.conf.old')
+    os.rename(pathwpasupplicant + 'wpa_supplicant.conf', pathwpasupplicant + 'wpa_supplicant.conf.old')
 #creation d'un nouveau fichier wpa_supplicant.conf.new
-    fichier = open(pathwpasupplicant+"wpa_supplicant.conf.new", "a")
-    lines="%s \n %s \n %s \n %s \n %s \n %s \n %s \n" % (d.header1, d.header2, d.header3, header4, header5, d.header6, d.header7)
+    fichier = open(pathwpasupplicant + 'wpa_supplicant.conf.new', 'a')
+    lines ='%s \n %s \n %s \n %s \n %s \n %s \n %s \n' % (d.header1, d.header2, d.header3, header4, header5, d.header6, d.header7)
     fichier.write(lines)
     fichier.close()
 #renommage du ficher wpa_supplicant.conf.new en wpa_supplicant.conf
-    os.rename(d.pathwpasupplicant+'wpa_supplicant.conf.new', pathwpasupplicant+'wpa_supplicant.conf')
+    os.rename(d.pathwpasupplicant + 'wpa_supplicant.conf.new', pathwpasupplicant + 'wpa_supplicant.conf')
     
 #********************
 #*  RECHERCHE METEO *
@@ -482,31 +482,31 @@ def wifi_3bplus(ssid,password):
 def get_city():
     #lecture valeur icao dans config.json       
         with open(Json, 'r') as b:
-            afind= json.load(b)
-            airport =afind['airport_code']
+            afind = json.load(b)
+            airport = afind['airport_code']
             #lecture ville dans fichier icao.cfg        
             icao2city = configparser.RawConfigParser()
             config.read(icao)
             Result_city = config.get('icao2city', airport)
             print (Result_city)
             #city= '"'+Result_city+'"'
-            ecrire("meteo.t0.txt",str(Result_city)) 
-            print("Aeroport de: " +Result_city) 
+            ecrire('meteo.t0.txt', str(Result_city)) 
+            print('Aeroport de: ' + Result_city) 
 
 #Fonction Meteo Lecture des donnees Metar + envoi Nextion
 def get_meteo():
     #recherche code IMAO dans config.json
     with open(Json, 'r') as b:
-        afind= json.load(b)
-        airport =afind['airport_code']
+        afind = json.load(b)
+        airport = afind['airport_code']
         #Info ville Aéroport
-        log(("Le code ICAO est: "+airport),"white")
+        log(('Le code ICAO est: ' + airport), 'white')
         get_city()
-        fichier = open("/tmp/meteo.txt", "w")
-        fichier.write("[rapport]")
+        fichier = open('/tmp/meteo.txt', 'w')
+        fichier.write('[rapport]')
         fichier.close()
-        result = console('/opt/spotnik/spotnik2hmi_V2/python-metar/get_report.py '+ airport+ '>> /tmp/meteo.txt')
-        log(str(result),"white")
+        result = console('/opt/spotnik/spotnik2hmi_V2/python-metar/get_report.py ' + airport + '>> /tmp/meteo.txt')
+        log(str(result), 'white')
         #routine ouverture fichier de config
         config = configparser.RawConfigParser()
         config.read('/tmp/meteo.txt')
@@ -517,12 +517,12 @@ def get_meteo():
         buletin = config.get('rapport', 'time')
         buletin = config.get('rapport', 'time')
         heure = buletin.split(':')
-        heure = heure[0][-2:] + ":"+heure[1]+ ":"+heure[2][:2]
-        log((pression[:-2]),"white")
-        log(rose,"white")
+        heure = heure[0][-2:] + ':' + heure[1] + ':' + heure[2][:2]
+        log((pression[:-2]), 'white')
+        log(rose, 'white')
         log(temperature,"white")
-        ecrire("meteo.t1.txt",str(temperature))
-        ecrire("meteo.t3.txt",str(heure))
-        ecrire("meteo.t4.txt",str(rose))
-        Pression = pression[:-2]+'hPa'
-        ecrire("meteo.t2.txt",str(Pression))
+        ecrire('meteo.t1.txt', str(temperature))
+        ecrire('meteo.t3.txt', str(heure))
+        ecrire('meteo.t4.txt', str(rose))
+        Pression = pression[:-2] + 'hPa'
+        ecrire('meteo.t2.txt', str(Pression))
